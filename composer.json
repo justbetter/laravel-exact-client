@@ -1,0 +1,69 @@
+{
+    "name": "justbetter/laravel-exact-client",
+    "description": "A client to interact with Exact",
+    "type": "package",
+    "authors": [
+        {
+            "name": "Vincent Boon",
+            "email": "vincent@justbetter.nl",
+            "role": "Developer"
+        },
+        {
+            "name": "Ramon Rietdijk",
+            "email": "ramon@justbetter.nl",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "guzzlehttp/guzzle": "^7.5",
+        "laravel/framework": "^11.0|^12.0",
+        "spatie/laravel-activitylog": "^4.9"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.21",
+        "orchestra/testbench": "^9.10",
+        "pestphp/pest": "^3.7",
+        "phpstan/phpstan-mockery": "^2.0",
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "JustBetter\\ExactClient\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JustBetter\\ExactClient\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan --memory-limit=256M",
+        "style": "pint --test",
+        "fix-style": "pint",
+        "quality": [
+            "@style",
+            "@analyse",
+            "@test",
+            "@coverage"
+        ],
+        "coverage": "XDEBUG_MODE=coverage php vendor/bin/pest --coverage --min=90"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JustBetter\\ExactClient\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

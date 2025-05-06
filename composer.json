@@ -2,6 +2,7 @@
     "name": "justbetter/laravel-exact-client",
     "description": "A client to interact with Exact",
     "type": "package",
+    "license": "MIT",
     "authors": [
         {
             "name": "Vincent Boon",

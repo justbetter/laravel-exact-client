@@ -70,4 +70,28 @@ class StoreRateLimitsListenerTest extends TestCase
 
         $this->assertNull($rateLimit);
     }
+
+    #[Test]
+    public function it_can_skip_when_headers_are_missing(): void
+    {
+        Carbon::setTestNow('2024-01-01 00:00:00');
+
+        $response = new Response(
+            new Psr7Response(200, [
+                'X-RateLimit-Limit' => '1000',
+                'X-RateLimit-Remaining' => '500',
+                'X-RateLimit-Reset' => (string) now()->addMinute()->getTimestampMs(),
+            ])
+        );
+
+        ExactResponseEvent::dispatch($response, '::connection::', '::division::');
+
+        /** @var ?RateLimit $rateLimit */
+        $rateLimit = RateLimit::query()
+            ->where('exact_division', '=', '::division::')
+            ->where('timestamp', '=', now()->getTimestamp())
+            ->first();
+
+        $this->assertNull($rateLimit);
+    }
 }

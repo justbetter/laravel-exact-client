@@ -4,6 +4,7 @@ namespace JustBetter\ExactClient\Tests\Jobs\Middleware;
 
 use Illuminate\Support\Carbon;
 use JustBetter\ExactClient\Client\Exact;
+use JustBetter\ExactClient\Concerns\DeterminesRateLimited;
 use JustBetter\ExactClient\Exceptions\ExactRateLimitedException;
 use JustBetter\ExactClient\Jobs\Middleware\RateLimitMiddleware;
 use JustBetter\ExactClient\Models\RateLimit;
@@ -78,6 +79,45 @@ class RateLimitMiddlewareTest extends TestCase
             'minutely_remaining' => 0,
             'minutely_reset_at' => now()->addMinute(),
         ]);
+
+        $job = $this->mock(TestJob::class, function (MockInterface $mock): void {
+            $mock
+                ->shouldReceive('release')
+                ->with(60)
+                ->once();
+        });
+
+        $middleware->handle($job, function (): void {
+            $this->fail('Job should not have run.');
+        });
+    }
+
+    #[Test]
+    public function it_can_release_jobs_with_a_default_limit(): void
+    {
+        Carbon::setTestNow('2024-01-01 00:00:00');
+
+        $middleware = RateLimitMiddleware::division('default');
+
+        $this->mock(DeterminesRateLimited::class, function (MockInterface $mock): void {
+            $mock
+                ->shouldReceive('dailyExceeded')
+                ->with('default', 1)
+                ->once()
+                ->andReturnFalse();
+
+            $mock
+                ->shouldReceive('minutelyExceeded')
+                ->with('default', 1)
+                ->once()
+                ->andReturnTrue();
+
+            $mock
+                ->shouldReceive('limit')
+                ->with('default')
+                ->once()
+                ->andReturnNull();
+        });
 
         $job = $this->mock(TestJob::class, function (MockInterface $mock): void {
             $mock

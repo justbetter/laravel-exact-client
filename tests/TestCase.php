@@ -5,6 +5,7 @@ namespace JustBetter\ExactClient\Tests;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use JustBetter\ExactClient\ServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Spatie\Activitylog\ActivitylogServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -14,6 +15,7 @@ abstract class TestCase extends BaseTestCase
     {
         return [
             ServiceProvider::class,
+            ActivitylogServiceProvider::class,
         ];
     }
 
@@ -25,5 +27,7 @@ abstract class TestCase extends BaseTestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
+
+        activity()->disableLogging();
     }
 }

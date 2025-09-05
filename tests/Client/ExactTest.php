@@ -101,6 +101,94 @@ class ExactTest extends TestCase
     }
 
     #[Test]
+    public function it_can_fetch_results_lazily(): void
+    {
+        Http::fake([
+            'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID' => Http::response([
+                'd' => [
+                    'results' => [
+                        [
+                            'ID' => '1',
+                        ],
+                        [
+                            'ID' => '2',
+                        ],
+                        [
+                            'ID' => '3',
+                        ],
+                    ],
+                    '__next' => 'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid\'3\'',
+                ],
+            ]),
+            'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid\'3\'' => Http::response([
+                'd' => [
+                    'results' => [
+                        [
+                            'ID' => '4',
+                        ],
+                        [
+                            'ID' => '5',
+                        ],
+                    ],
+                    '__next' => null,
+                ],
+            ]),
+        ])->preventStrayRequests();
+
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+
+        $lazy = $exact->lazy('endpoint', [
+            '$select' => 'ID',
+        ]);
+
+        $this->assertEquals(5, $lazy->collect()->count());
+
+        Http::assertSentInOrder([
+            function (Request $request): bool {
+                return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID'
+                    && $request->method() === 'GET';
+            },
+            function (Request $request): bool {
+                return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid\'3\''
+                    && $request->method() === 'GET';
+            },
+        ]);
+    }
+
+    #[Test]
+    public function it_can_throw_exceptions_if_a_top_is_used_when_fetching_results_lazily(): void
+    {
+        $this->expectException(ExactException::class);
+
+        Http::fake([
+            'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24top=3' => Http::response([
+                'd' => [
+                    [
+                        'ID' => '1',
+                    ],
+                    [
+                        'ID' => '2',
+                    ],
+                    [
+                        'ID' => '3',
+                    ],
+                ],
+            ]),
+        ])->preventStrayRequests();
+
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+
+        $lazy = $exact->lazy('endpoint', [
+            '$select' => 'ID',
+            '$top' => 3,
+        ]);
+
+        $lazy->collect();
+    }
+
+    #[Test]
     public function it_can_require_authentication_when_credentials_are_unavailable(): void
     {
         /** @var Credentials $credentials */
@@ -151,6 +239,40 @@ class ExactTest extends TestCase
         $this->assertFalse(
             $exact->requiresAuthentication('default')
         );
+    }
+
+    #[Test]
+    public function it_can_refresh_an_expired_token_before_a_call(): void
+    {
+        Http::fake([
+            'https://start.exactonline.nl/api/oauth2/token' => Http::response([
+                'access_token' => '::access-token::',
+                'token_type' => '::token-type::',
+                'expires_in' => '600',
+                'refresh_token' => '::refresh-token::',
+            ]),
+            'https://start.exactonline.nl/api/v1/0/endpoint' => Http::response(),
+        ])->preventStrayRequests();
+
+        /** @var Credentials $credentials */
+        $credentials = Credentials::query()->firstOrFail();
+        $credentials->expires_at = now()->subYear();
+        $credentials->save();
+
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+        $exact->get('endpoint');
+
+        Http::assertSentInOrder([
+            function (Request $request): bool {
+                return $request->url() === 'https://start.exactonline.nl/api/oauth2/token'
+                    && $request->method() === 'POST';
+            },
+            function (Request $request): bool {
+                return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
+                    && $request->method() === 'GET';
+            },
+        ]);
     }
 
     #[Test]
@@ -261,6 +383,31 @@ class ExactTest extends TestCase
     }
 
     #[Test]
+    public function it_can_determine_if_a_token_is_expired(): void
+    {
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+
+        $this->assertFalse(
+            $exact->expired('default')
+        );
+    }
+
+    #[Test]
+    public function it_can_throw_exceptions_if_credentials_are_unavailable(): void
+    {
+        $this->expectException(ExactAuthException::class);
+
+        /** @var Credentials $credentials */
+        $credentials = Credentials::query()->firstOrFail();
+        $credentials->delete();
+
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+        $exact->expired('default');
+    }
+
+    #[Test]
     public function it_can_refresh_tokens(): void
     {
         Http::fake([
@@ -313,6 +460,23 @@ class ExactTest extends TestCase
     }
 
     #[Test]
+    public function it_wont_refresh_valid_tokens(): void
+    {
+        Http::fake()->preventStrayRequests();
+
+        /** @var Credentials $credentials */
+        $credentials = Credentials::query()->firstOrFail();
+        $credentials->expires_at = now()->addYear();
+        $credentials->save();
+
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+        $exact->refresh('default');
+
+        Http::assertNothingSent();
+    }
+
+    #[Test]
     public function it_throws_an_exception_if_an_invalid_grant_is_given(): void
     {
         $this->expectException(ExactAuthException::class);
@@ -328,6 +492,25 @@ class ExactTest extends TestCase
         $credentials->update([
             'expires_at' => now()->subYear(),
         ]);
+
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+        $exact->refresh('default');
+    }
+
+    #[Test]
+    public function it_throws_an_exception_if_a_token_cannot_be_refreshed(): void
+    {
+        $this->expectException(ExactAuthException::class);
+
+        Http::fake([
+            'https://start.exactonline.nl/api/oauth2/token' => Http::response(null, 500),
+        ])->preventStrayRequests();
+
+        /** @var Credentials $credentials */
+        $credentials = Credentials::query()->firstOrFail();
+        $credentials->expires_at = now()->subYear();
+        $credentials->save();
 
         /** @var Exact $exact */
         $exact = app(Exact::class);

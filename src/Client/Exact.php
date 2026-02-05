@@ -19,14 +19,6 @@ use JustBetter\ExactClient\Models\Credentials;
 
 class Exact
 {
-    public const BASE_URL = 'https://start.exactonline.nl';
-
-    public const API_URL = '/api/v1';
-
-    public const AUTH_URL = '/api/oauth2/auth';
-
-    public const TOKEN_URL = '/api/oauth2/token';
-
     protected string $division;
 
     public function __construct(string $division)
@@ -132,7 +124,7 @@ class Exact
             ->where('exact_connection', '=', $connection)
             ->first();
 
-        if ($credentials === null || $credentials->expires_at === null) {
+        if ($credentials === null) {
             return true;
         }
 
@@ -146,7 +138,10 @@ class Exact
             $this->refresh($connection);
         }
 
-        $request = Http::baseUrl(static::BASE_URL.static::API_URL.'/'.$division)
+        $baseUrl = config()->string('exact.base_url');
+        $apiUrl = config()->string('exact.endpoints.api');
+
+        $request = Http::baseUrl($baseUrl.$apiUrl.'/'.$division)
             ->acceptJson()
             ->asJson();
 
@@ -207,7 +202,10 @@ class Exact
     {
         $data = $this->connection($connection);
 
-        return static::BASE_URL.static::AUTH_URL.'?'.http_build_query([
+        $baseUrl = config()->string('exact.base_url');
+        $endpoint = config()->string('exact.endpoints.auth');
+
+        return $baseUrl.$endpoint.'?'.http_build_query([
             'client_id' => $data->clientId(),
             'redirect_uri' => route('exact.auth.callback', ['connection' => $connection]),
             'response_type' => 'code',
@@ -219,9 +217,9 @@ class Exact
     {
         $data = $this->connection($connection);
 
-        $response = Http::baseUrl(static::BASE_URL)
+        $response = Http::baseUrl(config()->string('exact.base_url'))
             ->asForm()
-            ->post(static::TOKEN_URL, [
+            ->post(config()->string('exact.endpoints.token'), [
                 'code' => $code,
                 'redirect_uri' => route('exact.auth.callback', ['connection' => $connection]),
                 'grant_type' => 'authorization_code',
@@ -271,11 +269,11 @@ class Exact
 
             $data = $this->connection($connection);
 
-            $response = Http::baseUrl(static::BASE_URL)
+            $response = Http::baseUrl(config()->string('exact.base_url'))
                 ->timeout(30)
                 ->connectTimeout(30)
                 ->asForm()
-                ->post(static::TOKEN_URL, [
+                ->post(config()->string('exact.endpoints.token'), [
                     'refresh_token' => html_entity_decode($credentials->refresh_token),
                     'grant_type' => 'refresh_token',
                     'client_id' => $data->clientId(),

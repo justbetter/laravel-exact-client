@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'base_url' => 'https://start.exactonline.nl',
+
+    'endpoints' => [
+        'api' => '/api/v1',
+        'auth' => '/api/oauth2/auth',
+        'token' => '/api/oauth2/token',
+    ],
+
     'after_auth_location' => '/',
 
     'prefix' => 'exact',

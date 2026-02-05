@@ -12,6 +12,7 @@ class ConnectionDataTest extends TestCase
     public function it_can_interact_with_connection_data(): void
     {
         $data = ConnectionData::of([
+            'base_url' => '::base-url::',
             'code' => '::code::',
             'client_id' => '::client-id::',
             'client_secret' => '::client-secret::',

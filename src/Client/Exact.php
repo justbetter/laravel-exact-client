@@ -138,10 +138,10 @@ class Exact
             $this->refresh($connection);
         }
 
-        $baseUrl = config()->string('exact.base_url');
+        $data = $this->connection($connection);
         $apiUrl = config()->string('exact.endpoints.api');
 
-        $request = Http::baseUrl($baseUrl.$apiUrl.'/'.$division)
+        $request = Http::baseUrl($data->baseUrl().$apiUrl.'/'.$division)
             ->acceptJson()
             ->asJson();
 
@@ -202,10 +202,9 @@ class Exact
     {
         $data = $this->connection($connection);
 
-        $baseUrl = config()->string('exact.base_url');
         $endpoint = config()->string('exact.endpoints.auth');
 
-        return $baseUrl.$endpoint.'?'.http_build_query([
+        return $data->baseUrl().$endpoint.'?'.http_build_query([
             'client_id' => $data->clientId(),
             'redirect_uri' => route('exact.auth.callback', ['connection' => $connection]),
             'response_type' => 'code',
@@ -217,7 +216,7 @@ class Exact
     {
         $data = $this->connection($connection);
 
-        $response = Http::baseUrl(config()->string('exact.base_url'))
+        $response = Http::baseUrl($data->baseUrl())
             ->asForm()
             ->post(config()->string('exact.endpoints.token'), [
                 'code' => $code,
@@ -269,7 +268,7 @@ class Exact
 
             $data = $this->connection($connection);
 
-            $response = Http::baseUrl(config()->string('exact.base_url'))
+            $response = Http::baseUrl($data->baseUrl())
                 ->timeout(30)
                 ->connectTimeout(30)
                 ->asForm()

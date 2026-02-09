@@ -6,7 +6,7 @@ namespace JustBetter\ExactClient\Data;
 class ConnectionData extends Data
 {
     public array $rules = [
-        'base_url' => 'required|nullable',
+        'base_url' => 'string|nullable',
         'code' => 'required|string',
         'client_id' => 'required|string',
         'client_secret' => 'required|string',

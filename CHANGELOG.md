@@ -1,6 +1,15 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.0.1...main)
+[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.1.0...main)
+## [1.1.0](https://github.com/justbetter/laravel-exact-client/releases/tag/1.1.0) - 2026-02-09
+
+### What's Changed
+* Add more tests by @ramonrietdijk in https://github.com/justbetter/laravel-exact-client/pull/3
+* Move hardcoded URL / endpoints to configuration file by @VincentBean in https://github.com/justbetter/laravel-exact-client/pull/5
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-exact-client/compare/1.0.1...1.1.0
+
 ## [1.0.1](https://github.com/justbetter/laravel-exact-client/releases/tag/1.0.1) - 2025-08-13
 
 ### What's Changed

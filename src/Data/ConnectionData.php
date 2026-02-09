@@ -6,7 +6,7 @@ namespace JustBetter\ExactClient\Data;
 class ConnectionData extends Data
 {
     public array $rules = [
-        'base_url' => 'required|string',
+        'base_url' => 'required|nullable',
         'code' => 'required|string',
         'client_id' => 'required|string',
         'client_secret' => 'required|string',
@@ -15,7 +15,7 @@ class ConnectionData extends Data
 
     public function baseUrl(): string
     {
-        return $this['base_url'];
+        return $this['base_url'] ?? 'https://start.exactonline.nl';
     }
 
     public function code(): string

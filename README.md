@@ -87,7 +87,7 @@ Making calls to Exact will make sure the tokens remain valid. The package automa
 
 ```php
 $schedule->command(\JustBetter\ExactClient\Commands\RefreshTokenCommand::class, [
-    'connection' => 'default',
+    'default',
 ])->weekly();
 ```
 

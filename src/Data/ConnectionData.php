@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Data;
 
 /** @extends Data<string, mixed> */

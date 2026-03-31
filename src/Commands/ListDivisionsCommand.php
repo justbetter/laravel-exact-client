@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Commands;
 
 use Illuminate\Console\Command;
@@ -18,12 +20,10 @@ class ListDivisionsCommand extends Command
 
         $divisions = $exact->divisions($connection);
 
-        $rows = collect($divisions)->map(function (array $division): array {
-            return [
-                $division['Code'],
-                $division['Description'],
-            ];
-        })->toArray();
+        $rows = collect($divisions)->map(fn (array $division): array => [
+            $division['Code'],
+            $division['Description'],
+        ])->toArray();
 
         $this->table(['Code', 'Description'], $rows);
 

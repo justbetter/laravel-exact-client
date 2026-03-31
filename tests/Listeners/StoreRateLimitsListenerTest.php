@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Tests\Listeners;
 
 use GuzzleHttp\Psr7\Response as Psr7Response;
@@ -10,7 +12,7 @@ use JustBetter\ExactClient\Models\RateLimit;
 use JustBetter\ExactClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class StoreRateLimitsListenerTest extends TestCase
+final class StoreRateLimitsListenerTest extends TestCase
 {
     #[Test]
     public function it_stores_rate_limits(): void
@@ -68,7 +70,7 @@ class StoreRateLimitsListenerTest extends TestCase
             ->where('timestamp', '=', now()->getTimestamp())
             ->first();
 
-        $this->assertNull($rateLimit);
+        $this->assertNotInstanceOf(RateLimit::class, $rateLimit);
     }
 
     #[Test]
@@ -92,6 +94,6 @@ class StoreRateLimitsListenerTest extends TestCase
             ->where('timestamp', '=', now()->getTimestamp())
             ->first();
 
-        $this->assertNull($rateLimit);
+        $this->assertNotInstanceOf(RateLimit::class, $rateLimit);
     }
 }

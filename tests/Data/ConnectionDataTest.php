@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Tests\Data;
 
 use JustBetter\ExactClient\Data\ConnectionData;
 use JustBetter\ExactClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class ConnectionDataTest extends TestCase
+final class ConnectionDataTest extends TestCase
 {
     #[Test]
     public function it_can_interact_with_connection_data(): void
@@ -21,11 +23,11 @@ class ConnectionDataTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals('::code::', $data->code());
-        $this->assertEquals('::client-id::', $data->clientId());
-        $this->assertEquals('::client-secret::', $data->clientSecret());
-        $this->assertEquals(['::division-1::' => 1000], $data->divisions());
+        $this->assertSame('::code::', $data->code());
+        $this->assertSame('::client-id::', $data->clientId());
+        $this->assertSame('::client-secret::', $data->clientSecret());
+        $this->assertSame(['::division-1::' => 1000], $data->divisions());
 
-        $this->assertEquals(1000, $data->division('::division-1::'));
+        $this->assertSame(1000, $data->division('::division-1::'));
     }
 }

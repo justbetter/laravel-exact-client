@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Tests\Actions;
 
 use Illuminate\Support\Carbon;
@@ -8,7 +10,7 @@ use JustBetter\ExactClient\Models\RateLimit;
 use JustBetter\ExactClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class DetermineRateLimitedTest extends TestCase
+final class DetermineRateLimitedTest extends TestCase
 {
     #[Test]
     public function it_can_passes_daily_limit(): void

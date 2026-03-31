@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Tests\Jobs\Middleware;
 
 use Illuminate\Support\Carbon;
@@ -13,7 +15,7 @@ use JustBetter\ExactClient\Tests\TestCase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 
-class RateLimitMiddlewareTest extends TestCase
+final class RateLimitMiddlewareTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -57,7 +59,7 @@ class RateLimitMiddlewareTest extends TestCase
 
         $job = new TestJob;
 
-        $middleware->handle($job, function (): void {
+        $middleware->handle($job, function (): never {
             $this->fail('Job should not have run.');
         });
     }
@@ -87,7 +89,7 @@ class RateLimitMiddlewareTest extends TestCase
                 ->once();
         });
 
-        $middleware->handle($job, function (): void {
+        $middleware->handle($job, function (): never {
             $this->fail('Job should not have run.');
         });
     }
@@ -126,7 +128,7 @@ class RateLimitMiddlewareTest extends TestCase
                 ->once();
         });
 
-        $middleware->handle($job, function (): void {
+        $middleware->handle($job, function (): never {
             $this->fail('Job should not have run.');
         });
     }
@@ -164,7 +166,7 @@ class RateLimitMiddlewareTest extends TestCase
         });
 
         $middlewareTwo = RateLimitMiddleware::division('default', 2);
-        $middlewareTwo->handle($jobTwo, function (): void {
+        $middlewareTwo->handle($jobTwo, function (): never {
             $this->fail('Job should not have run.');
         });
     }

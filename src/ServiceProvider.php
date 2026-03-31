@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient;
 
 use Illuminate\Support\Facades\Event;
@@ -14,6 +16,7 @@ use JustBetter\ExactClient\Listeners\StoreRateLimitsListener;
 
 class ServiceProvider extends BaseServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this
@@ -23,11 +26,9 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function registerActions(): static
     {
-        app()->bind(Exact::class, function (): Exact {
-            return new Exact(
-                config()->string('exact.division')
-            );
-        });
+        app()->bind(Exact::class, fn (): Exact => new Exact(
+            config()->string('exact.division')
+        ));
 
         DetermineRateLimited::bind();
 

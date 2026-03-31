@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Tests\Collections;
 
 use JustBetter\ExactClient\Collections\ExactCollection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-class ExactCollectionTest extends TestCase
+final class ExactCollectionTest extends TestCase
 {
     #[Test]
     public function it_can_instantiate_a_collection_with_flat_items(): void

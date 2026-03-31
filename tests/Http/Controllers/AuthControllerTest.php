@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Tests\Http\Controllers;
 
 use JustBetter\ExactClient\Client\Exact;
@@ -7,7 +9,7 @@ use JustBetter\ExactClient\Tests\TestCase;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 
-class AuthControllerTest extends TestCase
+final class AuthControllerTest extends TestCase
 {
     #[Test]
     public function it_can_redirect(): void

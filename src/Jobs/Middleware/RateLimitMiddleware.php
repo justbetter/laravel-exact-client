@@ -20,7 +20,7 @@ class RateLimitMiddleware
 
     public function handle(object $job, Closure $next): void
     {
-        /** @var DeterminesRatelimited $determineRatelimited */
+        /** @var DeterminesRateLimited $determineRatelimited */
         $determineRatelimited = app(DeterminesRateLimited::class);
 
         // Daily limit has been exceeded.

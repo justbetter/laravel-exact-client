@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Listeners;
 
 use Illuminate\Support\Carbon;
@@ -29,7 +31,7 @@ class StoreRateLimitsListener
 
         $missing = array_diff($this->headers, array_keys($headers));
 
-        if (count($missing) > 0) {
+        if ($missing !== []) {
             return;
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Actions;
 
 use JustBetter\ExactClient\Concerns\DeterminesRateLimited;
@@ -11,7 +13,7 @@ class DetermineRateLimited implements DeterminesRateLimited
     {
         $limit = $this->limit($division);
 
-        if ($limit === null) {
+        if (! $limit instanceof RateLimit) {
             return false;
         }
 
@@ -26,7 +28,7 @@ class DetermineRateLimited implements DeterminesRateLimited
     {
         $limit = $this->limit($division);
 
-        if ($limit === null) {
+        if (! $limit instanceof RateLimit) {
             return false;
         }
 

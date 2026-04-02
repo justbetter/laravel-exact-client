@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Tests\Data;
 
 use Illuminate\Validation\ValidationException;
@@ -7,7 +9,7 @@ use JustBetter\ExactClient\Tests\Fakes\FakeData;
 use JustBetter\ExactClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class DataTest extends TestCase
+final class DataTest extends TestCase
 {
     #[Test]
     public function it_can_interact_with_data(): void
@@ -16,12 +18,12 @@ class DataTest extends TestCase
             'code' => '::code::',
         ]);
 
-        $this->assertTrue(isset($data['code']));
+        $this->assertArrayHasKey('code', $data);
         $this->assertEquals('::code::', $data['code']);
 
         $data['code'] = '::updated::';
 
-        $this->assertEquals('::updated::', $data['code']);
+        $this->assertSame('::updated::', $data['code']);
 
         unset($data['code']);
 
@@ -45,6 +47,6 @@ class DataTest extends TestCase
 
         $data = FakeData::of($payload);
 
-        $this->assertEquals($payload, $data->toArray());
+        $this->assertSame($payload, $data->toArray());
     }
 }

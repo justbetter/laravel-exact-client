@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Jobs\Middleware;
 
 use Closure;
@@ -20,7 +22,7 @@ class RateLimitMiddleware
 
     public function handle(object $job, Closure $next): void
     {
-        /** @var DeterminesRatelimited $determineRatelimited */
+        /** @var DeterminesRateLimited $determineRatelimited */
         $determineRatelimited = app(DeterminesRateLimited::class);
 
         // Daily limit has been exceeded.
@@ -31,16 +33,12 @@ class RateLimitMiddleware
 
         if (! $determineRatelimited->minutelyExceeded($this->division, $this->expectedCalls)) {
             $next($job);
-        } else {
-            if (method_exists($job, 'release')) {
-                $limit = $determineRatelimited->limit($this->division);
-
-                $seconds = $limit === null
-                    ? 60
-                    : (int) now()->diffInSeconds($limit->minutely_reset_at);
-
-                $job->release($seconds);
-            }
+        } elseif (method_exists($job, 'release')) {
+            $limit = $determineRatelimited->limit($this->division);
+            $seconds = $limit === null
+                ? 60
+                : (int) now()->diffInSeconds($limit->minutely_reset_at);
+            $job->release($seconds);
         }
     }
 }

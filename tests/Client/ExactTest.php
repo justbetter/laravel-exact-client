@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -12,7 +14,7 @@ use JustBetter\ExactClient\Models\Credentials;
 use JustBetter\ExactClient\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
-class ExactTest extends TestCase
+final class ExactTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -43,10 +45,8 @@ class ExactTest extends TestCase
         $exact = app(Exact::class);
         $exact->get('endpoint');
 
-        Http::assertSent(function (Request $request): bool {
-            return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
-                && $request->method() === 'GET';
-        });
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
+            && $request->method() === 'GET');
     }
 
     #[Test]
@@ -60,10 +60,8 @@ class ExactTest extends TestCase
         $exact = app(Exact::class);
         $exact->post('endpoint');
 
-        Http::assertSent(function (Request $request): bool {
-            return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
-                && $request->method() === 'POST';
-        });
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
+            && $request->method() === 'POST');
     }
 
     #[Test]
@@ -77,10 +75,8 @@ class ExactTest extends TestCase
         $exact = app(Exact::class);
         $exact->put('endpoint');
 
-        Http::assertSent(function (Request $request): bool {
-            return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
-                && $request->method() === 'PUT';
-        });
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
+            && $request->method() === 'PUT');
     }
 
     #[Test]
@@ -94,10 +90,8 @@ class ExactTest extends TestCase
         $exact = app(Exact::class);
         $exact->delete('endpoint');
 
-        Http::assertSent(function (Request $request): bool {
-            return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
-                && $request->method() === 'DELETE';
-        });
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
+            && $request->method() === 'DELETE');
     }
 
     #[Test]
@@ -117,10 +111,10 @@ class ExactTest extends TestCase
                             'ID' => '3',
                         ],
                     ],
-                    '__next' => 'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid\'3\'',
+                    '__next' => "https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid'3'",
                 ],
             ]),
-            'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid\'3\'' => Http::response([
+            "https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid'3'" => Http::response([
                 'd' => [
                     'results' => [
                         [
@@ -142,17 +136,13 @@ class ExactTest extends TestCase
             '$select' => 'ID',
         ]);
 
-        $this->assertEquals(5, $lazy->collect()->count());
+        $this->assertCount(5, $lazy->collect());
 
         Http::assertSentInOrder([
-            function (Request $request): bool {
-                return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID'
-                    && $request->method() === 'GET';
-            },
-            function (Request $request): bool {
-                return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid\'3\''
-                    && $request->method() === 'GET';
-            },
+            fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID'
+                && $request->method() === 'GET',
+            fn (Request $request): bool => $request->url() === "https://start.exactonline.nl/api/v1/0/endpoint?%24select=ID&%24skiptoken=guid'3'"
+                && $request->method() === 'GET',
         ]);
     }
 
@@ -264,14 +254,10 @@ class ExactTest extends TestCase
         $exact->get('endpoint');
 
         Http::assertSentInOrder([
-            function (Request $request): bool {
-                return $request->url() === 'https://start.exactonline.nl/api/oauth2/token'
-                    && $request->method() === 'POST';
-            },
-            function (Request $request): bool {
-                return $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
-                    && $request->method() === 'GET';
-            },
+            fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/oauth2/token'
+                && $request->method() === 'POST',
+            fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
+                && $request->method() === 'GET',
         ]);
     }
 
@@ -370,16 +356,14 @@ class ExactTest extends TestCase
         $this->assertEquals('::token-type::', $credentials->token_type);
         $this->assertEquals('::refresh-token::', $credentials->refresh_token);
 
-        Http::assertSent(function (Request $request): bool {
-            return $request->method() === 'POST'
-                && $request->data() === [
-                    'code' => '::code::',
-                    'redirect_uri' => 'http://localhost/exact/callback/default',
-                    'grant_type' => 'authorization_code',
-                    'client_id' => '::client-id::',
-                    'client_secret' => '::client-secret::',
-                ];
-        });
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
+            && $request->data() === [
+                'code' => '::code::',
+                'redirect_uri' => 'http://localhost/exact/callback/default',
+                'grant_type' => 'authorization_code',
+                'client_id' => '::client-id::',
+                'client_secret' => '::client-secret::',
+            ]);
     }
 
     #[Test]
@@ -434,15 +418,13 @@ class ExactTest extends TestCase
         $this->assertEquals('::access-token-2::', $credentials->access_token);
         $this->assertEquals('::refresh-token-2::', $credentials->refresh_token);
 
-        Http::assertSent(function (Request $request): bool {
-            return $request->method() === 'POST'
-                && $request->data() === [
-                    'refresh_token' => '::refresh-token::',
-                    'grant_type' => 'refresh_token',
-                    'client_id' => '::client-id::',
-                    'client_secret' => '::client-secret::',
-                ];
-        });
+        Http::assertSent(fn (Request $request): bool => $request->method() === 'POST'
+            && $request->data() === [
+                'refresh_token' => '::refresh-token::',
+                'grant_type' => 'refresh_token',
+                'client_id' => '::client-id::',
+                'client_secret' => '::client-secret::',
+            ]);
     }
 
     #[Test]

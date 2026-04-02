@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JustBetter\ExactClient\Client;
 
 use Closure;
@@ -159,13 +161,11 @@ class Exact
         /** @var array<string, array<string, mixed>> $connections */
         $connections = config()->array('exact.connections', []);
 
-        return collect($connections)->map(function (array $connection, string $code): ConnectionData {
-            return ConnectionData::of(
-                array_merge($connection, [
-                    'code' => $code,
-                ])
-            );
-        });
+        return collect($connections)->map(fn (array $connection, string $code): ConnectionData => ConnectionData::of(
+            array_merge($connection, [
+                'code' => $code,
+            ])
+        ));
     }
 
     public function connection(string $code): ConnectionData

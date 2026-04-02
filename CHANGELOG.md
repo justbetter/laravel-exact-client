@@ -1,6 +1,15 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.1.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.2.0...main)
+## [1.2.0](https://github.com/justbetter/laravel-exact-client/releases/tag/1.2.0) - 2026-04-02
+
+### What's Changed
+* Update readme by @VincentBean in https://github.com/justbetter/laravel-exact-client/pull/7
+* Laravel 13 support by @VincentBean in https://github.com/justbetter/laravel-exact-client/pull/8
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-exact-client/compare/1.1.0...1.2.0
+
 ## [1.1.0](https://github.com/justbetter/laravel-exact-client/releases/tag/1.1.0) - 2026-02-09
 
 ### What's Changed

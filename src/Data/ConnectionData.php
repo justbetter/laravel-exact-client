@@ -42,6 +42,6 @@ class ConnectionData extends Data
 
     public function division(string $code): int
     {
-        return $this['divisions'][$code];
+        return (int) $this['divisions'][$code];
     }
 }

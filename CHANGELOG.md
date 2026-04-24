@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.2.0...main)
+[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.2.1...main)
+## [1.2.1](https://github.com/justbetter/laravel-exact-client/releases/tag/1.2.1) - 2026-04-24
+
+### What's Changed
+* Add cast by @VincentBean in https://github.com/justbetter/laravel-exact-client/pull/9
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-exact-client/compare/1.2.0...1.2.1
+
 ## [1.2.0](https://github.com/justbetter/laravel-exact-client/releases/tag/1.2.0) - 2026-04-02
 
 ### What's Changed

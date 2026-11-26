@@ -21,12 +21,16 @@ final class ConnectionDataTest extends TestCase
             'divisions' => [
                 '::division-1::' => 1000,
             ],
+            'timeout' => 120,
+            'connect_timeout' => 20,
         ]);
 
         $this->assertSame('::code::', $data->code());
         $this->assertSame('::client-id::', $data->clientId());
         $this->assertSame('::client-secret::', $data->clientSecret());
         $this->assertSame(['::division-1::' => 1000], $data->divisions());
+        $this->assertSame(120, $data->timeout());
+        $this->assertSame(20, $data->connectTimeout());
 
         $this->assertSame(1000, $data->division('::division-1::'));
     }

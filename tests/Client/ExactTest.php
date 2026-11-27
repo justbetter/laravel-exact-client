@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -47,6 +48,28 @@ final class ExactTest extends TestCase
 
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://start.exactonline.nl/api/v1/0/endpoint'
             && $request->method() === 'GET');
+    }
+
+    #[Test]
+    public function it_uses_the_connection_timeouts(): void
+    {
+        config()->set('exact.connections.default.timeout', 120);
+        config()->set('exact.connections.default.connect_timeout', 20);
+
+        $options = [];
+
+        Http::fake(function (Request $request, array $requestOptions) use (&$options): PromiseInterface {
+            $options = $requestOptions;
+
+            return Http::response();
+        })->preventStrayRequests();
+
+        /** @var Exact $exact */
+        $exact = app(Exact::class);
+        $exact->get('endpoint');
+
+        $this->assertSame(120, $options['timeout']);
+        $this->assertSame(20, $options['connect_timeout']);
     }
 
     #[Test]

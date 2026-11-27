@@ -13,6 +13,8 @@ class ConnectionData extends Data
         'client_id' => 'required|string',
         'client_secret' => 'required|string',
         'divisions' => 'array',
+        'timeout' => 'integer',
+        'connect_timeout' => 'integer',
     ];
 
     public function baseUrl(): string
@@ -43,5 +45,15 @@ class ConnectionData extends Data
     public function division(string $code): int
     {
         return (int) $this['divisions'][$code];
+    }
+
+    public function timeout(): int
+    {
+        return $this['timeout'] ?? 30;
+    }
+
+    public function connectTimeout(): int
+    {
+        return $this['connect_timeout'] ?? 10;
     }
 }

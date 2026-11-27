@@ -144,6 +144,8 @@ class Exact
         $apiUrl = config()->string('exact.endpoints.api');
 
         $request = Http::baseUrl($data->baseUrl().$apiUrl.'/'.$division)
+            ->timeout($data->timeout())
+            ->connectTimeout($data->connectTimeout())
             ->acceptJson()
             ->asJson();
 

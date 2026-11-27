@@ -23,6 +23,8 @@ return [
             'divisions' => [
                 'default' => env('EXACT_DIVISION'),
             ],
+            'timeout' => 30,
+            'connect_timeout' => 10,
         ],
     ],
 ];

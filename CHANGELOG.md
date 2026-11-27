@@ -1,6 +1,14 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.2.1...main)
+[Unreleased changes](https://github.com/justbetter/laravel-exact-client/compare/1.2.2...main)
+## [1.2.2](https://github.com/justbetter/laravel-exact-client/releases/tag/1.2.2) - 2026-11-27
+
+### What's Changed
+* Make timeout configurable by @VincentBean in https://github.com/justbetter/laravel-exact-client/pull/10
+
+
+**Full Changelog**: https://github.com/justbetter/laravel-exact-client/compare/1.2.1...1.2.2
+
 ## [1.2.1](https://github.com/justbetter/laravel-exact-client/releases/tag/1.2.1) - 2026-04-24
 
 ### What's Changed
